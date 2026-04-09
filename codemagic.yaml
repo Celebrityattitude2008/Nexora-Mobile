@@ -2,9 +2,9 @@ workflows:
   android-capacitor-workflow:
     name: Capacitor Android Build
     max_build_duration: 60
-    environment:
-      node: latest
-      ruby: latest
+environment:
+  node: latest
+  ruby: 3.2.2
     scripts:
       - name: Install dependencies
         script: | 
