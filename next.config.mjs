@@ -1,7 +1,10 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  // Static export mode for Capacitor/APK builds — set NEXT_STATIC_EXPORT=1 in CI
-  ...(process.env.NEXT_STATIC_EXPORT === '1' ? { output: 'export' } : {}),
+  output: 'export', // Force it to always create the 'out' folder
+  images: {
+    unoptimized: true, // This is required for static exports
+  },
 };
 
 export default nextConfig;
