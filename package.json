@@ -26,6 +26,7 @@
     "firebase-admin": "^12.7.0",
     "is-extglob": "^2.1.1",
     "next": "14.2.5",
+    "onesignal-cordova-plugin": "^5.3.6",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",

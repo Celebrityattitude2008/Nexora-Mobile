@@ -2,8 +2,8 @@ import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10 sm:px-6 md:px-10 lg:px-12">
-      <div className="mx-auto max-w-6xl rounded-[2.5rem] border border-slate-800 bg-slate-900/90 p-8 shadow-panel backdrop-blur-xl">
+    <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-8 sm:px-6 md:px-8 lg:px-10">
+      <div className="mx-auto max-w-6xl rounded-[2.5rem] border border-slate-800 bg-slate-900/90 p-6 sm:p-8 shadow-panel backdrop-blur-xl">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div>
             <p className="text-sm uppercase tracking-[0.4em] text-slate-500">Nexora</p>

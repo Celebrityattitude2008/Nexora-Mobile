@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { searchSpotify, type SpotifySearchResult, type SpotifyTrack, type SpotifyArtist, type SpotifySearchType } from '../lib/spotifyService';
+import { spotifyAppRemote } from '../lib/spotifyAppRemote';
 
 const isTrack = (item: SpotifySearchResult): item is SpotifyTrack => 'preview_url' in item;
 
@@ -21,6 +22,7 @@ export function SpotifySearch() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isNativePlayback, setIsNativePlayback] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -73,13 +75,50 @@ export function SpotifySearch() {
     setLoading(false);
   };
 
-  const selectTrack = (track: SpotifyTrack) => {
+  const selectTrack = async (track: SpotifyTrack) => {
+    setError('');
+    
+    // If already playing this track, toggle play/pause
+    if (currentTrack?.id === track.id && isNativePlayback) {
+      try {
+        if (isPlaying) {
+          await spotifyAppRemote.pause();
+        } else {
+          await spotifyAppRemote.resume();
+        }
+        setIsPlaying(!isPlaying);
+      } catch (err) {
+        setError(`Playback control failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      }
+      return;
+    }
+
+    // Try native App Remote playback first
+    if (spotifyAppRemote.isNativePlaybackAvailable()) {
+      try {
+        const spotifyUri = `spotify:track:${track.id}`;
+        await spotifyAppRemote.playTrack({
+          uri: spotifyUri,
+          previewUrl: track.preview_url || undefined,
+        });
+        setCurrentTrack(track);
+        setIsPlaying(true);
+        setIsNativePlayback(true);
+        setCurrentTime(0);
+        setDuration(0);
+        return;
+      } catch (err) {
+        console.warn('Native playback failed, falling back to preview:', err);
+        setIsNativePlayback(false);
+      }
+    }
+
+    // Fallback to preview URL
     if (!track.preview_url) {
       setError('This track does not have a Spotify preview available.');
       return;
     }
 
-    setError('');
     if (currentTrack?.id === track.id) {
       setIsPlaying((prev) => !prev);
       return;
@@ -87,6 +126,7 @@ export function SpotifySearch() {
 
     setCurrentTrack(track);
     setIsPlaying(true);
+    setIsNativePlayback(false);
     setCurrentTime(0);
     setDuration(0);
   };
@@ -154,6 +194,7 @@ export function SpotifySearch() {
                 <img
                   src={isTrack(result) ? result.album.images[0]?.url : result.images[0]?.url}
                   alt={result.name}
+                  loading="lazy"
                   className="w-16 h-16 rounded-lg object-cover"
                 />
                 <div className="flex-1 min-w-0">
@@ -178,7 +219,11 @@ export function SpotifySearch() {
                     >
                       {isTrack(result)
                         ? currentTrack?.id === result.id && isPlaying
-                          ? 'Pause Preview'
+                          ? spotifyAppRemote.isNativePlaybackAvailable()
+                            ? 'Pause'
+                            : 'Pause Preview'
+                          : spotifyAppRemote.isNativePlaybackAvailable()
+                          ? 'Play on Spotify'
                           : 'Play Preview'
                         : 'No Preview'}
                     </button>
@@ -203,13 +248,16 @@ export function SpotifySearch() {
         </div>
       ) : null}
 
-      {currentTrack && currentTrack.preview_url && (
+      {currentTrack && (
         <div className="mt-6 rounded-2xl border border-amber-400/30 bg-slate-950/70 p-4">
-          <h3 className="font-semibold text-slate-100 text-sm sm:text-base mb-3">Now Playing</h3>
+          <h3 className="font-semibold text-slate-100 text-sm sm:text-base mb-3">
+            Now Playing {isNativePlayback ? '(Spotify App)' : '(Preview)'}
+          </h3>
           <div className="flex gap-3 items-center">
             <img
               src={currentTrack.album.images[0]?.url}
               alt={currentTrack.name}
+              loading="lazy"
               className="w-12 h-12 rounded"
             />
             <div className="flex-1 min-w-0">
@@ -217,31 +265,40 @@ export function SpotifySearch() {
               <p className="text-xs text-slate-400">{currentTrack.artists.map((a) => a.name).join(', ')}</p>
             </div>
           </div>
-          <audio ref={audioRef} src={currentTrack.preview_url} preload="auto" hidden />
-          <div className="mt-4 flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setIsPlaying((prev) => !prev)}
-                className="rounded-full bg-amber-400/20 px-4 py-2 text-sm font-medium text-amber-200 hover:bg-amber-400/30 transition"
-              >
-                {isPlaying ? 'Pause' : 'Play'} Preview
-              </button>
-              <span className="text-xs text-slate-400">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-            </div>
-            <input
-              type="range"
-              min={0}
-              max={duration || 30}
-              value={currentTime}
-              onChange={(e) => handleSeek(Number(e.target.value))}
-              className="h-1 w-full cursor-pointer rounded-full bg-slate-700 accent-amber-400"
-            />
-          </div>
+          {currentTrack.preview_url && (
+            <>
+              <audio ref={audioRef} src={currentTrack.preview_url} preload="auto" hidden />
+              <div className="mt-4 flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsPlaying((prev) => !prev)}
+                    className="rounded-full bg-amber-400/20 px-4 py-2 text-sm font-medium text-amber-200 hover:bg-amber-400/30 transition"
+                  >
+                    {isPlaying ? 'Pause' : 'Play'} {isNativePlayback ? 'Track' : 'Preview'}
+                  </button>
+                  {!isNativePlayback && (
+                    <span className="text-xs text-slate-400">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
+                  )}
+                </div>
+                {!isNativePlayback && (
+                  <input
+                    type="range"
+                    min={0}
+                    max={duration || 30}
+                    value={currentTime}
+                    onChange={(e) => handleSeek(Number(e.target.value))}
+                    className="h-1 w-full cursor-pointer rounded-full bg-slate-700 accent-amber-400"
+                  />
+                )}
+              </div>
+            </>
+          )}
         </div>
       )}
     </section>
   );
 }
+

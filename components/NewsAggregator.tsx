@@ -98,6 +98,7 @@ export function NewsAggregator() {
                   <img
                     src={article.urlToImage}
                     alt={article.title}
+                    loading="lazy"
                     className="w-full sm:w-24 h-32 sm:h-20 object-cover rounded-lg"
                     onError={(event) => {
                       (event.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=News+Image';

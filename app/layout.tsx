@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import AppNavigation from '../components/AppNavigation';
+import OneSignalInitializer from '../components/OneSignalInitializer';
 import { AuthProvider } from '../components/AuthProvider';
 
 export const metadata: Metadata = {
@@ -36,8 +37,9 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-slate-950 text-slate-100">
+      <body className="min-h-screen bg-burgundy-950 text-gold">
         <AuthProvider>
+          <OneSignalInitializer />
           <AppNavigation />
           {children}
         </AuthProvider>

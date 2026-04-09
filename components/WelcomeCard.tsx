@@ -57,6 +57,7 @@ export function WelcomeCard({ user }: WelcomeCardProps) {
             <img
               src={profilePic}
               alt={displayName}
+              loading="lazy"
               className="h-full w-full rounded-full object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
@@ -68,6 +69,7 @@ export function WelcomeCard({ user }: WelcomeCardProps) {
             <img
               src={user.photoURL}
               alt={displayName}
+              loading="lazy"
               className="h-full w-full rounded-full object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;

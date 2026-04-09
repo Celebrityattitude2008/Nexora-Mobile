@@ -42,6 +42,7 @@ export function CreatorPanel() {
             <img
               src={avatarSrc}
               alt="Paul Adamu"
+              loading="lazy"
               className="w-full h-full object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
