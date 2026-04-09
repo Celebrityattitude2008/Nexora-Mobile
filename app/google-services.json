@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "945572569484",
+    "project_id": "bizarchive-db0f6",
+    "storage_bucket": "bizarchive-db0f6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945572569484:android:2591a9cd33d144da0bf6a9",
+        "android_client_info": {
+          "package_name": "com.zti.nexora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiu8l7Ejz_waKW0J6kWLBBPDJvaJSOCD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

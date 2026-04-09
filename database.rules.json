@@ -1,0 +1,35 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "users": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid",
+        "tasks": {
+          "$taskId": {
+            ".validate": "newData.hasChildren(['title','completed','progress']) && newData.child('title').isString() && newData.child('completed').isBoolean() && newData.child('progress').isNumber() && newData.child('progress').val() >= 0 && newData.child('progress').val() <= 100"
+          }
+        },
+        "calendarEvents": {
+          "$eventId": {
+            ".validate": "newData.hasChildren(['title','datetime']) && newData.child('title').isString() && newData.child('datetime').isString() && (!newData.hasChild('description') || newData.child('description').isString())"
+          }
+        },
+        "goals": {
+          "$goalId": {
+            ".validate": "newData.hasChildren(['label','current','total']) && newData.child('label').isString() && newData.child('current').isNumber() && newData.child('total').isNumber()"
+          }
+        },
+        "profilePic": {
+          ".validate": "newData.isString() || newData.val() === null"
+        },
+        "expenses": {
+          "$expenseId": {
+            ".validate": "newData.hasChildren(['name','amount','category','createdAt']) && newData.child('name').isString() && newData.child('amount').isNumber() && newData.child('category').isString() && newData.child('createdAt').isString() && (!newData.hasChild('notes') || newData.child('notes').isString())"
+          }
+        }
+      }
+    }
+  }
+}
