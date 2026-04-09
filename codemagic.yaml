@@ -1,11 +1,23 @@
 workflows:
-  android-workflow:
-    name: Android Build
+  android-capacitor-workflow:
+    name: Capacitor Android Build
     max_build_duration: 60
+    environment:
+      node: latest
+      ruby: latest
     scripts:
-      - name: Get dependencies
-        script: flutter packages pub get
-      - name: Build APK
-        script: flutter build apk --release
+      - name: Install dependencies
+        script: | 
+          npm install
+      - name: Build Web Assets
+        script: | 
+          npm run build
+      - name: Capacitor Sync
+        script: | 
+          npx cap sync android
+      - name: Build Android APK
+        script: | 
+          cd android
+          ./gradlew assembleRelease
     artifacts:
-      - build/**/outputs/**/*.apk
+      - android/app/build/outputs/apk/release/*.apk
