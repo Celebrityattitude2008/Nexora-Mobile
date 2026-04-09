@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5000 -H 0.0.0.0",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 5000 -H 0.0.0.0",
     "lint": "next lint",
     "cron:news-update": "node scripts/update-news.js",
     "cron:weather-update": "node scripts/update-weather.js",
@@ -30,7 +30,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "ts-interface-checker": "^1.0.2",
-    "undici": "^8.0.1",
+    "undici": "^6.21.2",
     "util-deprecate": "^1.0.2"
   },
   "devDependencies": {
@@ -44,5 +44,8 @@
     "postcss": "^8.4.36",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.4"
+  },
+  "overrides": {
+    "undici": "^6.21.2"
   }
 }
