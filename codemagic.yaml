@@ -10,7 +10,10 @@ workflows:
           npm install
       - name: Build static web assets for Capacitor
         script: |
-          NEXT_STATIC_EXPORT=1 npm run build
+          npm run build
+      - name: Add Android platform
+        script: |
+          npx cap add android
       - name: Capacitor sync
         script: |
           npx cap sync android
