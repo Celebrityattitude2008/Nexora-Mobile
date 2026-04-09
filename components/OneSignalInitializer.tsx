@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from 'react';
-import OneSignal from 'onesignal-cordova-plugin';
 
 export default function OneSignalInitializer() {
   useEffect(() => {
@@ -13,7 +12,17 @@ export default function OneSignalInitializer() {
       return;
     }
 
-    OneSignal.setAppId(appId);
+    const initOneSignal = async () => {
+      try {
+        const module = await import('onesignal-cordova-plugin');
+        const OneSignal = module.default ?? module;
+        OneSignal.setAppId(appId);
+      } catch (error) {
+        console.warn('OneSignal failed to load on this platform:', error);
+      }
+    };
+
+    initOneSignal();
   }, []);
 
   return null;

@@ -1,12 +1,16 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { AnalyticsPanel } from '../../components/AnalyticsPanel';
 import { DailyGoals } from '../../components/DailyGoals';
 import { TaskList } from '../../components/TaskList';
 import { WelcomeCard } from '../../components/WelcomeCard';
-import { NotificationService } from '../../components/NotificationService';
 import { ProtectedPage } from '../../components/ProtectedPage';
 import { useAuth } from '../../components/AuthProvider';
+
+const NotificationService = dynamic(() => import('../../components/NotificationService').then((mod) => mod.NotificationService), {
+  ssr: false,
+});
 
 export default function DashboardPage() {
   const { user } = useAuth();

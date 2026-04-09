@@ -1,8 +1,12 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { CreatorPanel } from '../../components/CreatorPanel';
-import { SpotifySearch } from '../../components/SpotifySearch';
 import { ProtectedPage } from '../../components/ProtectedPage';
+
+const SpotifySearch = dynamic(() => import('../../components/SpotifySearch').then((mod) => mod.SpotifySearch), {
+  ssr: false,
+});
 
 export default function MusicPage() {
   return (

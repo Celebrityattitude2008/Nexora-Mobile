@@ -1,8 +1,14 @@
 'use client';
 
-import { NewsAggregator } from '../../components/NewsAggregator';
-import { StockMarketTracker } from '../../components/StockMarketTracker';
+import dynamic from 'next/dynamic';
 import { ProtectedPage } from '../../components/ProtectedPage';
+
+const NewsAggregator = dynamic(() => import('../../components/NewsAggregator').then((mod) => mod.NewsAggregator), {
+  ssr: false,
+});
+const StockMarketTracker = dynamic(() => import('../../components/StockMarketTracker').then((mod) => mod.StockMarketTracker), {
+  ssr: false,
+});
 
 export default function FinancePage() {
   return (

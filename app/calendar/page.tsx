@@ -1,9 +1,13 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { CalendarWidget } from '../../components/CalendarWidget';
-import { WeatherCard } from '../../components/WeatherCard';
 import { ProtectedPage } from '../../components/ProtectedPage';
 import { useAuth } from '../../components/AuthProvider';
+
+const WeatherCard = dynamic(() => import('../../components/WeatherCard').then((mod) => mod.WeatherCard), {
+  ssr: false,
+});
 
 export default function CalendarPage() {
   const { user } = useAuth();

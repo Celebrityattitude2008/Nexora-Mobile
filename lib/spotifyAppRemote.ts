@@ -7,7 +7,10 @@ export interface SpotifyPlaybackResult {
 
 class SpotifyAppRemoteService {
   private clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
-  private isNative = Capacitor.isNativePlatform();
+
+  private get isNative(): boolean {
+    return typeof window !== 'undefined' && Capacitor.isNativePlatform();
+  }
 
   /**
    * Play a track using the Spotify App Remote SDK (native) or preview URL (web fallback)
@@ -63,6 +66,10 @@ class SpotifyAppRemoteService {
       throw new Error('Pause is only available on native platforms');
     }
 
+    if (typeof window === 'undefined' || !(window as any).Capacitor?.Plugins?.SpotifyAppRemote) {
+      throw new Error('Spotify App Remote plugin is not available');
+    }
+
     try {
       const result = await (window as any).Capacitor.Plugins.SpotifyAppRemote.pause();
       return result;
@@ -77,6 +84,10 @@ class SpotifyAppRemoteService {
   async resume(): Promise<SpotifyPlaybackResult> {
     if (!this.isNative) {
       throw new Error('Resume is only available on native platforms');
+    }
+
+    if (typeof window === 'undefined' || !(window as any).Capacitor?.Plugins?.SpotifyAppRemote) {
+      throw new Error('Spotify App Remote plugin is not available');
     }
 
     try {
