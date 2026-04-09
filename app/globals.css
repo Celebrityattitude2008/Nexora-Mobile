@@ -135,3 +135,39 @@ select {
 .shadow-panel {
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.55);
 }
+
+/* Safe area insets for notched phones */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Mobile scrolling */
+html, body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
+}
+
+/* Tap highlight removal for mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Better touch targets */
+button, a {
+  touch-action: manipulation;
+}
+
+/* Input zoom prevention on iOS (min font size 16px stops auto-zoom) */
+input, select, textarea {
+  font-size: 16px;
+}
+
+@media (min-width: 640px) {
+  input, select, textarea {
+    font-size: inherit;
+  }
+}

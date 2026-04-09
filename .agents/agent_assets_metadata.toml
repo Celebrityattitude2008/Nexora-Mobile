@@ -1,0 +1,31 @@
+uploads = []
+
+[[generated]]
+id = "Bit_zhuLrkRqYTdg9_UXo"
+uri = "file://public/icons/icon-512.png"
+type = "image"
+title = "nexora app icon 512"
+
+[[generated]]
+id = "2L7WSpTw19li2UgFntXGI"
+uri = "file://public/icons/splash.png"
+type = "image"
+title = "nexora splash screen"
+
+[[generated]]
+id = "XhcxJ-C_rRs-d3afw-QKs"
+uri = "file://public/icons/icon-192.png"
+type = "image"
+title = "nexora app icon 192"
+
+[[outputs]]
+id = "BQquFemV0kaItvqlSWLiA"
+uri = "file://public/icons/icon-512.png"
+type = "image"
+title = "Nexora App Logo"
+
+[[outputs]]
+id = "nImVjvxLHZ-FWmikkMoxV"
+uri = "file://public/icons/splash.png"
+type = "image"
+title = "Nexora Splash Screen"
