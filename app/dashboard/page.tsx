@@ -11,8 +11,6 @@ import { useAuth } from '../../components/AuthProvider';
 export default function DashboardPage() {
   const { user } = useAuth();
 
-  if (!user) return null;
-
   return (
     <ProtectedPage>
       <div className="mx-auto max-w-7xl">
@@ -27,19 +25,19 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="flex w-full lg:w-auto flex-col gap-3 sm:gap-4">
-            <WelcomeCard user={user} />
+            <WelcomeCard user={user!} />
           </div>
         </div>
 
-        <NotificationService user={user} />
+        <NotificationService user={user!} />
 
         <section className="space-y-6 animate-stagger">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[1.15fr_0.85fr]">
-            <TaskList user={user} />
-            <DailyGoals user={user} />
+            <TaskList user={user!} />
+            <DailyGoals user={user!} />
           </div>
 
-          <AnalyticsPanel user={user} />
+          <AnalyticsPanel user={user!} />
         </section>
       </div>
     </ProtectedPage>

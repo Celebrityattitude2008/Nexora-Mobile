@@ -3,13 +3,8 @@
 import { NotesWidget } from '../../components/NotesWidget';
 import { WeatherCard } from '../../components/WeatherCard';
 import { ProtectedPage } from '../../components/ProtectedPage';
-import { useAuth } from '../../components/AuthProvider';
 
 export default function NotesPage() {
-  const { user } = useAuth();
-
-  if (!user) return null;
-
   return (
     <ProtectedPage>
       <div className="mx-auto max-w-7xl">

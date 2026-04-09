@@ -8,8 +8,6 @@ import { useAuth } from '../../components/AuthProvider';
 export default function CalendarPage() {
   const { user } = useAuth();
 
-  if (!user) return null;
-
   return (
     <ProtectedPage>
       <div className="mx-auto max-w-7xl">
@@ -22,7 +20,7 @@ export default function CalendarPage() {
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
-          <CalendarWidget user={user} />
+          <CalendarWidget user={user!} />
           <WeatherCard />
         </div>
       </div>

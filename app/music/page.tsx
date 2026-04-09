@@ -3,13 +3,8 @@
 import { CreatorPanel } from '../../components/CreatorPanel';
 import { SpotifySearch } from '../../components/SpotifySearch';
 import { ProtectedPage } from '../../components/ProtectedPage';
-import { useAuth } from '../../components/AuthProvider';
 
 export default function MusicPage() {
-  const { user } = useAuth();
-
-  if (!user) return null;
-
   return (
     <ProtectedPage>
       <div className="mx-auto max-w-7xl">

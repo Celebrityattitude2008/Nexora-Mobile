@@ -3,13 +3,8 @@
 import { NewsAggregator } from '../../components/NewsAggregator';
 import { StockMarketTracker } from '../../components/StockMarketTracker';
 import { ProtectedPage } from '../../components/ProtectedPage';
-import { useAuth } from '../../components/AuthProvider';
 
 export default function FinancePage() {
-  const { user } = useAuth();
-
-  if (!user) return null;
-
   return (
     <ProtectedPage>
       <div className="mx-auto max-w-7xl">
