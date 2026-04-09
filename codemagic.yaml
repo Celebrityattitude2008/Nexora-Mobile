@@ -2,22 +2,22 @@ workflows:
   android-capacitor-workflow:
     name: Capacitor Android Build
     max_build_duration: 60
-environment:
-    node: latest
-    ruby: 3.2.2
+    environment:
+      node: latest
     scripts:
       - name: Install dependencies
-        script: | 
+        script: |
           npm install
-      - name: Build Web Assets
-        script: | 
-          npm run build
-      - name: Capacitor Sync
-        script: | 
+      - name: Build static web assets for Capacitor
+        script: |
+          NEXT_STATIC_EXPORT=1 npm run build
+      - name: Capacitor sync
+        script: |
           npx cap sync android
       - name: Build Android APK
-        script: | 
+        script: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleRelease
     artifacts:
       - android/app/build/outputs/apk/release/*.apk
