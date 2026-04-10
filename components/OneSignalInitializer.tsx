@@ -14,9 +14,9 @@ export default function OneSignalInitializer() {
 
     const initOneSignal = async () => {
       try {
-        const module = await import('onesignal-cordova-plugin');
-        const OneSignal = module.default ?? module;
-        OneSignal.setAppId(appId);
+        const OneSignal = await import('onesignal-cordova-plugin');
+        const OneSignalInstance = OneSignal.default ?? OneSignal;
+        OneSignalInstance.setAppId(appId);
       } catch (error) {
         console.warn('OneSignal failed to load on this platform:', error);
       }

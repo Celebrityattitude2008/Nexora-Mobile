@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { searchSpotify, type SpotifySearchResult, type SpotifyTrack, type SpotifyArtist, type SpotifySearchType } from '../lib/spotifyService';
 import { spotifyAppRemote } from '../lib/spotifyAppRemote';
@@ -191,10 +192,12 @@ export function SpotifySearch() {
               className="rounded-2xl border border-slate-700/60 bg-slate-950/50 p-4 hover:bg-slate-950/80 transition"
             >
               <div className="flex gap-4 items-start">
-                <img
+                <Image
                   src={isTrack(result) ? result.album.images[0]?.url : result.images[0]?.url}
                   alt={result.name}
-                  loading="lazy"
+                  width={64}
+                  height={64}
+                  unoptimized
                   className="w-16 h-16 rounded-lg object-cover"
                 />
                 <div className="flex-1 min-w-0">
@@ -254,10 +257,12 @@ export function SpotifySearch() {
             Now Playing {isNativePlayback ? '(Spotify App)' : '(Preview)'}
           </h3>
           <div className="flex gap-3 items-center">
-            <img
+            <Image
               src={currentTrack.album.images[0]?.url}
               alt={currentTrack.name}
-              loading="lazy"
+              width={48}
+              height={48}
+              unoptimized
               className="w-12 h-12 rounded"
             />
             <div className="flex-1 min-w-0">

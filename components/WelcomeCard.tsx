@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { onValue, ref, set } from 'firebase/database';
 import { User } from 'firebase/auth';
@@ -54,10 +55,12 @@ export function WelcomeCard({ user }: WelcomeCardProps) {
           className="relative flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-500 text-2xl font-bold text-slate-950 shadow-lg shadow-amber-500/30 transition hover:scale-105 focus:outline-none"
         >
           {profilePic ? (
-            <img
+            <Image
               src={profilePic}
               alt={displayName}
-              loading="lazy"
+              width={64}
+              height={64}
+              unoptimized
               className="h-full w-full rounded-full object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
@@ -66,10 +69,12 @@ export function WelcomeCard({ user }: WelcomeCardProps) {
               }}
             />
           ) : user.photoURL ? (
-            <img
+            <Image
               src={user.photoURL}
               alt={displayName}
-              loading="lazy"
+              width={64}
+              height={64}
+              unoptimized
               className="h-full w-full rounded-full object-cover"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;

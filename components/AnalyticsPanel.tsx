@@ -320,7 +320,7 @@ export function AnalyticsPanel({ user }: AnalyticsPanelProps) {
         <h3 className="font-semibold text-amber-300 mb-2">💡 Productivity Insights</h3>
         <ul className="text-sm text-slate-300 space-y-1">
           {metrics.productivityScore > 80 && (
-            <li>• Excellent productivity! You're crushing your goals.</li>
+            <li>• Excellent productivity! You are crushing your goals.</li>
           )}
           {metrics.completionRate < 50 && metrics.totalTasks > 0 && (
             <li>• Consider breaking large tasks into smaller, manageable steps.</li>

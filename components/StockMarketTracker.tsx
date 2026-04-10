@@ -13,93 +13,93 @@ type StockData = {
   timestamp: string;
 };
 
+const defaultStocks: StockData[] = [
+  {
+    symbol: 'AAPL',
+    price: 180.45,
+    change: 2.15,
+    changePercent: 1.21,
+    high: 182.5,
+    low: 178.2,
+    timestamp: new Date().toISOString(),
+  },
+  {
+    symbol: 'GOOGL',
+    price: 140.23,
+    change: -1.5,
+    changePercent: -1.06,
+    high: 142.8,
+    low: 139.1,
+    timestamp: new Date().toISOString(),
+  },
+  {
+    symbol: 'MSFT',
+    price: 420.15,
+    change: 5.85,
+    changePercent: 1.41,
+    high: 425.0,
+    low: 414.3,
+    timestamp: new Date().toISOString(),
+  },
+];
+
 export function StockMarketTracker() {
   const [stocks, setStocks] = useState<StockData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searchSymbol, setSearchSymbol] = useState('AAPL');
 
-  const defaultStocks: StockData[] = [
-    {
-      symbol: 'AAPL',
-      price: 180.45,
-      change: 2.15,
-      changePercent: 1.21,
-      high: 182.5,
-      low: 178.2,
-      timestamp: new Date().toISOString(),
-    },
-    {
-      symbol: 'GOOGL',
-      price: 140.23,
-      change: -1.5,
-      changePercent: -1.06,
-      high: 142.8,
-      low: 139.1,
-      timestamp: new Date().toISOString(),
-    },
-    {
-      symbol: 'MSFT',
-      price: 420.15,
-      change: 5.85,
-      changePercent: 1.41,
-      high: 425.0,
-      low: 414.3,
-      timestamp: new Date().toISOString(),
-    },
-  ];
-
   useEffect(() => {
-    fetchStocks();
-  }, []);
+    const fetchStocks = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const apiKey = process.env.NEXT_PUBLIC_FINNHUB_API_KEY || '';
 
-  const fetchStocks = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const apiKey = process.env.NEXT_PUBLIC_FINNHUB_API_KEY || '';
-      
-      if (!apiKey) {
-        setError('Finnhub API key not configured');
+        if (!apiKey) {
+          setError('Finnhub API key not configured');
+          setStocks(defaultStocks);
+          setLoading(false);
+          return;
+        }
+
+        // Using Finnhub API
+        const symbols = ['AAPL', 'GOOGL', 'MSFT'];
+        const promises = symbols.map((symbol) =>
+          axios.get(`https://finnhub.io/api/v1/quote`, {
+            params: {
+              symbol: symbol,
+              token: apiKey,
+            },
+          })
+        );
+
+        const responses = await Promise.all(promises);
+        const fetchedStocks: StockData[] = responses
+          .map((res, idx) => {
+            const data = res.data;
+            return {
+              symbol: symbols[idx],
+              price: parseFloat(data.c || '0'),
+              change: parseFloat(data.d || '0'),
+              changePercent: parseFloat(data.dp || '0'),
+              high: parseFloat(data.h || '0'),
+              low: parseFloat(data.l || '0'),
+              timestamp: new Date().toISOString(),
+            };
+          })
+          .filter((stock) => stock.price > 0);
+
+        setStocks(fetchedStocks.length ? fetchedStocks : defaultStocks);
+      } catch (err) {
+        setError('Failed to fetch stock data');
         setStocks(defaultStocks);
-        setLoading(false);
-        return;
       }
+      setLoading(false);
+    };
 
-      // Using Finnhub API
-      const symbols = ['AAPL', 'GOOGL', 'MSFT'];
-      const promises = symbols.map((symbol) =>
-        axios.get(`https://finnhub.io/api/v1/quote`, {
-          params: {
-            symbol: symbol,
-            token: apiKey,
-          },
-        })
-      );
-
-      const responses = await Promise.all(promises);
-      const fetchedStocks: StockData[] = responses
-        .map((res, idx) => {
-          const data = res.data;
-          return {
-            symbol: symbols[idx],
-            price: parseFloat(data.c || '0'),
-            change: parseFloat(data.d || '0'),
-            changePercent: parseFloat(data.dp || '0'),
-            high: parseFloat(data.h || '0'),
-            low: parseFloat(data.l || '0'),
-            timestamp: new Date().toISOString(),
-          };
-        })
-        .filter((stock) => stock.price > 0);
-
-      setStocks(fetchedStocks.length ? fetchedStocks : defaultStocks);
-    } catch (err) {
-      setError('Failed to fetch stock data');
-      setStocks(defaultStocks);
-    }
-    setLoading(false);
-  };
+    fetchStocks();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAddStock = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -90,7 +90,7 @@ export function NotesWidget() {
             <div className="flex items-center justify-center h-full text-slate-500 text-sm">
               <div className="text-center">
                 <div className="text-4xl mb-2">📝</div>
-                <p>Click "Edit" to start writing your notes</p>
+                <p>Click &quot;Edit&quot; to start writing your notes</p>
               </div>
             </div>
           )}

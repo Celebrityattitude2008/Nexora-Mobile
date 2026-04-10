@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { getNews, type NewsArticle, type NewsCategory } from '../lib/newsService';
 
@@ -28,30 +29,30 @@ export function NewsAggregator() {
   ];
 
   useEffect(() => {
-    fetchNews();
-  }, [category]);
+    const fetchNews = async () => {
+      setLoading(true);
+      setError('');
 
-  const fetchNews = async () => {
-    setLoading(true);
-    setError('');
+      try {
+        const data = await getNews(category);
 
-    try {
-      const data = await getNews(category);
+        if (!data?.articles?.length) {
+          throw new Error('No articles available from NewsAPI.');
+        }
 
-      if (!data?.articles?.length) {
-        throw new Error('No articles available from NewsAPI.');
+        setArticles(data.articles.slice(0, 5));
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+
+        setError(`Failed to fetch news. ${message}`);
+        setArticles(fallbackArticles);
       }
 
-      setArticles(data.articles.slice(0, 5));
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
+      setLoading(false);
+    };
 
-      setError(`Failed to fetch news. ${message}`);
-      setArticles(fallbackArticles);
-    }
-
-    setLoading(false);
-  };
+    fetchNews();
+  }, [category]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <section className="rounded-3xl border border-slate-700/80 bg-slate-900/80 p-4 sm:p-6 shadow-panel backdrop-blur-xl">
@@ -95,10 +96,12 @@ export function NewsAggregator() {
             >
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 {article.urlToImage && (
-                  <img
+                  <Image
                     src={article.urlToImage}
                     alt={article.title}
-                    loading="lazy"
+                    width={320}
+                    height={200}
+                    unoptimized
                     className="w-full sm:w-24 h-32 sm:h-20 object-cover rounded-lg"
                     onError={(event) => {
                       (event.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=News+Image';
