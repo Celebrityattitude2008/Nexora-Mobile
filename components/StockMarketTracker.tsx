@@ -199,7 +199,7 @@ export function StockMarketTracker() {
                   className={`px-2 py-1 rounded-lg text-xs font-medium ${
                     stock.change >= 0
                       ? 'bg-green-400/20 text-green-300'
-                      : 'bg-red-400/20 text-red-300'
+                      : 'bg-slate-700/20 text-slate-300'
                   }`}
                 >
                   {stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)}
@@ -210,7 +210,7 @@ export function StockMarketTracker() {
                 <p className="text-3xl sm:text-2xl font-bold text-white">${stock.price.toFixed(2)}</p>
                 <p
                   className={`text-sm mt-1 ${
-                    stock.changePercent >= 0 ? 'text-green-400' : 'text-red-400'
+                    stock.changePercent >= 0 ? 'text-green-400' : 'text-slate-400'
                   }`}
                 >
                   {stock.changePercent >= 0 ? '▲' : '▼'} {Math.abs(stock.changePercent).toFixed(2)}%

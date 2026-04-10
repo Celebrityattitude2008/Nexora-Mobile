@@ -333,7 +333,7 @@ export function DailyGoals({ user }: DailyGoalsProps) {
                       </button>
                       <button
                         onClick={() => deleteGoal(goal.id)}
-                        className="rounded px-2 py-1 text-xs bg-red-600/20 text-red-300 hover:bg-red-600/40 transition"
+                        className="rounded px-2 py-1 text-xs bg-amber-400/20 text-amber-200 hover:bg-amber-400/30 transition"
                       >
                         Delete
                       </button>

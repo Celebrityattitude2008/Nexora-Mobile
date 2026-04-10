@@ -114,7 +114,7 @@ export function CalendarWidget({ user }: CalendarWidgetProps) {
                   </div>
                   <button
                     onClick={() => deleteEvent(event.id)}
-                    className="rounded-full bg-red-600/10 px-3 py-1 text-xs font-semibold text-red-300 hover:bg-red-600/20 transition"
+                    className="rounded-full bg-amber-400/10 px-3 py-1 text-xs font-semibold text-amber-200 hover:bg-amber-400/20 transition"
                   >
                     Delete
                   </button>

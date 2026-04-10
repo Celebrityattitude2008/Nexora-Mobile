@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 
 export function CreatorPanel() {
   const [avatarSrc, setAvatarSrc] = useState(
-    'https://drive.google.com/uc?id=1AUnYEZdGEjJk9RKt_O4fSsbLENiEQjHD'
+    '/paul.png'
   );
 
   const socialLinks = [
@@ -30,7 +31,7 @@ export function CreatorPanel() {
       name: 'YouTube',
       icon: '▶️',
       url: 'https://www.youtube.com/@officialpauladamu',
-      color: 'hover:bg-red-400/20 hover:border-red-400/40',
+      color: 'hover:bg-amber-400/20 hover:border-amber-400/40',
     },
   ];
 
@@ -39,19 +40,13 @@ export function CreatorPanel() {
       <div className="text-center">
         <div className="mb-6 flex justify-center">
           <div className="relative w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-amber-400/30 bg-gradient-to-br from-amber-400/20 to-slate-800 flex items-center justify-center overflow-hidden shadow-lg">
-            <img
+            <Image
               src={avatarSrc}
               alt="Paul Adamu"
-              loading="lazy"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.onerror = null;
-                const svgBase64 = btoa(
-                  `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256"><rect fill="#1d2936" width="256" height="256"/><text x="50%" y="50%" font-size="64" fill="#fbbf24" text-anchor="middle" dominant-baseline="middle" font-family="Arial">PA</text></svg>`
-                );
-                target.src = `data:image/svg+xml;base64,${svgBase64}`;
-              }}
+              width={128}
+              height={128}
+              className="w-full h-full object-cover rounded-full"
+              onError={() => setAvatarSrc('/paul.png')}
             />
           </div>
         </div>
@@ -89,11 +84,6 @@ export function CreatorPanel() {
           </p>
         </div>
       </div>
-
-      <div className="mt-6 space-y-4">
-        <div className="rounded-xl border border-slate-700/60 bg-slate-950/50 p-3 text-center text-xs text-slate-400">
-          <p>Profile picture from Google Drive</p>
-        </div>
         <div className="rounded-xl border border-amber-400/30 bg-amber-400/5 p-4">
           <p className="text-xs sm:text-sm text-slate-300 mb-3">Have a project in mind?</p>
           <a
@@ -105,7 +95,6 @@ export function CreatorPanel() {
             Get in Touch
           </a>
         </div>
-      </div>
     </section>
   );
 }

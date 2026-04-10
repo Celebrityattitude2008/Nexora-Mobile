@@ -125,7 +125,7 @@ export function AuthPanel() {
             />
           ) : null}
 
-          {error ? <p className="text-sm text-rose-400">{error}</p> : null}
+          {error ? <p className="text-sm text-amber-300">{error}</p> : null}
           {status ? <p className="text-sm text-amber-300">{status}</p> : null}
 
           <button

@@ -30,14 +30,14 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: '#060818',
+  themeColor: '#111111',
   viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-burgundy-950 text-gold">
+      <body className="min-h-screen">
         <AuthProvider>
           <OneSignalInitializer />
           <AppNavigation />
