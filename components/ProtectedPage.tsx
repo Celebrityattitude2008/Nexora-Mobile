@@ -9,14 +9,15 @@ import { checkMissedTimers } from '../lib/timerService';
 export function ProtectedPage({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
+  useEffect(() => {
+    if (user) {
+      void checkMissedTimers(user.uid);
+    }
+  }, [user]);
+
   if (loading) {
     return <LoadingScreen />;
   }
-
-  useEffect(() => {
-    if (!user) return;
-    void checkMissedTimers(user.uid);
-  }, [user]);
 
   if (!user) {
     return (
