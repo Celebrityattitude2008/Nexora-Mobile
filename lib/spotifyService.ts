@@ -23,17 +23,6 @@ export async function searchSpotify(
   type: SpotifySearchType = 'track',
   limit: number = 5
 ): Promise<SpotifySearchResult[]> {
-  const url = new URL('/api/spotify-search', window.location.origin);
-  url.searchParams.set('query', query);
-  url.searchParams.set('type', type);
-  url.searchParams.set('limit', String(limit));
-
-  const res = await fetch(url.toString());
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data?.error ?? `Spotify search failed (${res.status})`);
-  }
-
-  return data as SpotifySearchResult[];
+  const { searchSpotifyDirect } = await import('./spotify');
+  return searchSpotifyDirect(query, type, limit);
 }
