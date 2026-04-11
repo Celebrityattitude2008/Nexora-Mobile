@@ -1,105 +1,60 @@
-import { Capacitor } from '@capacitor/core';
-
 export interface SpotifyPlaybackResult {
   status: 'playing' | 'paused' | 'resumed';
   uri?: string;
 }
 
 class SpotifyAppRemoteService {
-  private clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
-
   private get isNative(): boolean {
-    return typeof window !== 'undefined' && Capacitor.isNativePlatform();
+    if (typeof window === 'undefined') return false;
+    try {
+      const cap = (window as any).Capacitor;
+      return cap?.isNativePlatform?.() === true;
+    } catch {
+      return false;
+    }
   }
 
-  /**
-   * Play a track using the Spotify App Remote SDK (native) or preview URL (web fallback)
-   * @param track - { uri: string, previewUrl?: string }
-   */
   async playTrack(track: { uri: string; previewUrl?: string }): Promise<SpotifyPlaybackResult> {
-    if (!this.clientId) {
-      throw new Error('Spotify Client ID is not configured');
-    }
-
-    // If on native platform (iOS/Android), use App Remote
     if (this.isNative) {
       try {
+        const clientId = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID;
         const result = await (window as any).Capacitor.Plugins.SpotifyAppRemote.play({
           uri: track.uri,
-          clientId: this.clientId,
+          clientId,
         });
         return result;
-      } catch (error) {
-        console.warn('Native playback failed, falling back to preview:', error);
-        // Fallback to preview URL if native fails
-        if (track.previewUrl) {
-          return this.playPreview(track.previewUrl);
-        }
-        throw error;
+      } catch (err) {
+        console.warn('Native Spotify playback failed, falling back to preview:', err);
       }
     }
 
-    // Web platform fallback: use preview URL
     if (track.previewUrl) {
-      return this.playPreview(track.previewUrl);
+      return this._playPreview(track.previewUrl);
     }
 
-    throw new Error('No playback method available (preview URL missing and native not available)');
+    throw new Error('No playback method available');
   }
 
-  /**
-   * Play a preview URL (web fallback)
-   */
-  private playPreview(previewUrl: string): SpotifyPlaybackResult {
-    const audioElement = new Audio(previewUrl);
-    audioElement.play().catch((err) => console.error('Preview playback failed:', err));
-    return {
-      status: 'playing',
-    };
+  private _playPreview(previewUrl: string): SpotifyPlaybackResult {
+    const audio = new Audio(previewUrl);
+    audio.play().catch((err) => console.error('Preview playback failed:', err));
+    return { status: 'playing' };
   }
 
-  /**
-   * Pause playback
-   */
   async pause(): Promise<SpotifyPlaybackResult> {
-    if (!this.isNative) {
-      throw new Error('Pause is only available on native platforms');
-    }
-
-    if (typeof window === 'undefined' || !(window as any).Capacitor?.Plugins?.SpotifyAppRemote) {
-      throw new Error('Spotify App Remote plugin is not available');
-    }
-
-    try {
-      const result = await (window as any).Capacitor.Plugins.SpotifyAppRemote.pause();
-      return result;
-    } catch (error) {
-      throw new Error(`Pause failed: ${error}`);
-    }
+    if (!this.isNative) throw new Error('Pause is only available on native platforms');
+    const result = await (window as any).Capacitor.Plugins.SpotifyAppRemote.pause();
+    return result;
   }
 
-  /**
-   * Resume playback
-   */
   async resume(): Promise<SpotifyPlaybackResult> {
-    if (!this.isNative) {
-      throw new Error('Resume is only available on native platforms');
-    }
-
-    if (typeof window === 'undefined' || !(window as any).Capacitor?.Plugins?.SpotifyAppRemote) {
-      throw new Error('Spotify App Remote plugin is not available');
-    }
-
-    try {
-      const result = await (window as any).Capacitor.Plugins.SpotifyAppRemote.resume();
-      return result;
-    } catch (error) {
-      throw new Error(`Resume failed: ${error}`);
-    }
+    if (!this.isNative) throw new Error('Resume is only available on native platforms');
+    const result = await (window as any).Capacitor.Plugins.SpotifyAppRemote.resume();
+    return result;
   }
 
   isNativePlaybackAvailable(): boolean {
-    return this.isNative && !!this.clientId;
+    return this.isNative;
   }
 }
 

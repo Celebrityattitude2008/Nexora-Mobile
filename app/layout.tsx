@@ -36,26 +36,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
+    <html lang="en" suppressHydrationWarning>
+      <body className="min-h-screen" suppressHydrationWarning>
         <script
           dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var saved = localStorage.getItem('theme-mode');
-                  var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                  var theme = saved || sys;
-                  document.documentElement.classList.add(theme);
-                } catch(e) {
-                  document.documentElement.classList.add('dark');
-                }
-              })();
-            `,
+            __html: `(function(){try{var s=localStorage.getItem('theme-mode');var m=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var t=s||m;document.documentElement.classList.add(t);}catch(e){document.documentElement.classList.add('dark');}})();`,
           }}
         />
-      </head>
-      <body className="min-h-screen">
         <AuthProvider>
           <OneSignalInitializer />
           <AppNavigation />

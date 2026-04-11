@@ -28,6 +28,14 @@
           "$expenseId": {
             ".validate": "newData.hasChildren(['name','amount','category','createdAt']) && newData.child('name').isString() && newData.child('amount').isNumber() && newData.child('category').isString() && newData.child('createdAt').isString() && (!newData.hasChild('notes') || newData.child('notes').isString())"
           }
+        },
+        "timers": {
+          "$timerId": {
+            ".validate": "newData.hasChildren(['message','triggerAt','triggered','type','createdAt']) && newData.child('message').isString() && newData.child('triggerAt').isNumber() && newData.child('triggered').isBoolean() && newData.child('type').isString() && newData.child('createdAt').isNumber() && (!newData.hasChild('relatedId') || newData.child('relatedId').isString())",
+            "triggered": {
+              ".validate": "newData.isBoolean()"
+            }
+          }
         }
       }
     }

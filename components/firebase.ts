@@ -17,8 +17,10 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const database = getDatabase(app);
-export const userTasksRef = (uid: string) => ref(database, `users/${uid}/tasks`);
+
+export const userTasksRef        = (uid: string) => ref(database, `users/${uid}/tasks`);
 export const userCalendarEventsRef = (uid: string) => ref(database, `users/${uid}/calendarEvents`);
-export const userGoalsRef = (uid: string) => ref(database, `users/${uid}/goals`);
-export const userProfilePicRef = (uid: string) => ref(database, `users/${uid}/profilePic`);
-export const userExpensesRef = (uid: string) => ref(database, `users/${uid}/expenses`);
+export const userGoalsRef        = (uid: string) => ref(database, `users/${uid}/goals`);
+export const userProfilePicRef   = (uid: string) => ref(database, `users/${uid}/profilePic`);
+export const userExpensesRef     = (uid: string) => ref(database, `users/${uid}/expenses`);
+export const userTimersRef       = (uid: string) => ref(database, `users/${uid}/timers`);
