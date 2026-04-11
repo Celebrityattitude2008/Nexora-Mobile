@@ -9,6 +9,18 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
 
+const inputStyle: React.CSSProperties = {
+  width: '100%',
+  borderRadius: 999,
+  border: '1px solid var(--border)',
+  backgroundColor: 'var(--bg-80)',
+  color: 'var(--text)',
+  padding: '14px 20px',
+  outline: 'none',
+  transition: 'border-color 0.2s ease, background-color 0.2s ease',
+  fontSize: 'inherit',
+};
+
 export function AuthPanel() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
@@ -70,31 +82,43 @@ export function AuthPanel() {
 
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 py-8 sm:px-6">
-      <div className="rounded-[2rem] border border-slate-700/70 bg-slate-900/90 p-8 shadow-panel animate-slide-up-fade backdrop-blur-xl">
+      <div
+        className="rounded-[2rem] border p-8 shadow-panel animate-slide-up-fade backdrop-blur-xl"
+        style={{
+          borderColor: 'var(--border)',
+          backgroundColor: 'var(--surface-90)',
+        }}
+      >
         <div className="mb-8 flex flex-col gap-3">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Secure access</p>
-          <h1 className="text-4xl font-semibold text-white sm:text-5xl">{title}</h1>
-          <p className="max-w-2xl text-slate-400">{description}</p>
+          <p className="text-sm uppercase tracking-[0.3em]" style={{ color: 'var(--text-secondary)' }}>
+            Secure access
+          </p>
+          <h1 className="text-4xl font-semibold sm:text-5xl" style={{ color: 'var(--text)' }}>
+            {title}
+          </h1>
+          <p style={{ color: 'var(--muted)' }}>{description}</p>
         </div>
 
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <button
             onClick={() => setMode('login')}
-            className={`rounded-full px-5 py-3 text-sm font-semibold transition duration-300 ${
+            className="rounded-full px-5 py-3 text-sm font-semibold transition-all duration-200 hover:scale-[1.02]"
+            style={
               !isSignup
-                ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/20'
-                : 'border border-slate-700 text-slate-200 hover:bg-slate-800'
-            }`}
+                ? { backgroundColor: 'var(--accent)', color: '#111', boxShadow: 'var(--shadow-glow)' }
+                : { border: '1px solid var(--border)', color: 'var(--text)', backgroundColor: 'var(--surface-50)' }
+            }
           >
             Log in
           </button>
           <button
             onClick={() => setMode('signup')}
-            className={`rounded-full px-5 py-3 text-sm font-semibold transition duration-300 ${
+            className="rounded-full px-5 py-3 text-sm font-semibold transition-all duration-200 hover:scale-[1.02]"
+            style={
               isSignup
-                ? 'bg-amber-400 text-slate-950 shadow-lg shadow-amber-500/20'
-                : 'border border-slate-700 text-slate-200 hover:bg-slate-800'
-            }`}
+                ? { backgroundColor: 'var(--accent)', color: '#111', boxShadow: 'var(--shadow-glow)' }
+                : { border: '1px solid var(--border)', color: 'var(--text)', backgroundColor: 'var(--surface-50)' }
+            }
           >
             Sign up
           </button>
@@ -104,47 +128,63 @@ export function AuthPanel() {
           <input
             type="email"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Email address"
-            className="rounded-3xl border border-slate-700/80 bg-slate-950/80 px-4 py-4 text-slate-100 outline-none transition focus:border-amber-400"
+            style={inputStyle}
+            onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; }}
+            onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
           />
           <input
             type="password"
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
-            className="rounded-3xl border border-slate-700/80 bg-slate-950/80 px-4 py-4 text-slate-100 outline-none transition focus:border-amber-400"
+            style={inputStyle}
+            onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; }}
+            onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
           />
-          {isSignup ? (
+          {isSignup && (
             <input
               type="password"
               value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm password"
-              className="rounded-3xl border border-slate-700/80 bg-slate-950/80 px-4 py-4 text-slate-100 outline-none transition focus:border-amber-400"
+              style={inputStyle}
+              onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; }}
+              onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
             />
-          ) : null}
+          )}
 
-          {error ? <p className="text-sm text-amber-300">{error}</p> : null}
-          {status ? <p className="text-sm text-amber-300">{status}</p> : null}
+          {error && (
+            <p className="text-sm" style={{ color: 'var(--accent)' }}>{error}</p>
+          )}
+          {status && (
+            <p className="text-sm" style={{ color: 'var(--accent)' }}>{status}</p>
+          )}
 
           <button
             onClick={submit}
-            className="rounded-full bg-amber-400 px-6 py-4 text-base font-semibold text-slate-950 transition duration-300 hover:bg-amber-300"
+            className="rounded-full px-6 py-4 text-base font-semibold transition-all duration-200 hover:scale-[1.01] hover:shadow-glow active:scale-[0.99]"
+            style={{ backgroundColor: 'var(--accent)', color: '#111' }}
           >
             {isSignup ? 'Create account' : 'Continue'}
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-slate-700" />
-            <span className="text-xs uppercase tracking-[0.2em] text-slate-400">Or</span>
-            <div className="h-px flex-1 bg-slate-700" />
+            <div className="h-px flex-1" style={{ backgroundColor: 'var(--border)' }} />
+            <span className="text-xs uppercase tracking-[0.2em]" style={{ color: 'var(--text-secondary)' }}>Or</span>
+            <div className="h-px flex-1" style={{ backgroundColor: 'var(--border)' }} />
           </div>
 
           <button
             type="button"
             onClick={signInWithGoogle}
-            className="flex items-center justify-center gap-3 rounded-full border border-slate-700 bg-slate-950/80 px-6 py-4 text-base font-semibold text-slate-100 transition hover:bg-slate-800"
+            className="flex items-center justify-center gap-3 rounded-full border px-6 py-4 text-base font-semibold transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
+            style={{
+              borderColor: 'var(--border)',
+              backgroundColor: 'var(--bg-80)',
+              color: 'var(--text)',
+            }}
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -157,21 +197,31 @@ export function AuthPanel() {
         </div>
       </div>
 
-      <div className="rounded-[2rem] border border-slate-700/70 bg-slate-900/90 p-6 shadow-panel backdrop-blur-xl">
-        <p className="text-sm uppercase tracking-[0.3em] text-slate-500">Why sign in?</p>
-        <ul className="mt-4 space-y-3 text-slate-400">
-          <li className="flex items-start gap-3">
-            <span className="mt-1 inline-block h-2 w-2 rounded-full bg-amber-300" />
-            Save tasks, goals, and calendar events across devices.
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="mt-1 inline-block h-2 w-2 rounded-full bg-amber-300" />
-            Access your personal dashboard from anywhere.
-          </li>
-          <li className="flex items-start gap-3">
-            <span className="mt-1 inline-block h-2 w-2 rounded-full bg-amber-300" />
-            Keep your dashboard secure with Firebase authentication.
-          </li>
+      <div
+        className="rounded-[2rem] border p-6 shadow-panel backdrop-blur-xl animate-slide-up-fade"
+        style={{
+          borderColor: 'var(--border)',
+          backgroundColor: 'var(--surface-90)',
+          animationDelay: '0.15s',
+        }}
+      >
+        <p className="text-sm uppercase tracking-[0.3em]" style={{ color: 'var(--text-secondary)' }}>
+          Why sign in?
+        </p>
+        <ul className="mt-4 space-y-3" style={{ color: 'var(--muted)' }}>
+          {[
+            'Save tasks, goals, and calendar events across devices.',
+            'Access your personal dashboard from anywhere.',
+            'Keep your dashboard secure with Firebase authentication.',
+          ].map((item) => (
+            <li key={item} className="flex items-start gap-3">
+              <span
+                className="mt-1.5 inline-block h-2 w-2 flex-shrink-0 rounded-full"
+                style={{ backgroundColor: 'var(--accent)' }}
+              />
+              {item}
+            </li>
+          ))}
         </ul>
       </div>
     </div>
