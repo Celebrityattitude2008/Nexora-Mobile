@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen" suppressHydrationWarning>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var s=localStorage.getItem('theme-mode');var m=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var t=s||m;document.documentElement.classList.add(t);}catch(e){document.documentElement.classList.add('dark');}})();`,
+            __html: `(function(){try{var mode=localStorage.getItem('theme-mode');var style=localStorage.getItem('theme-style')||'default';var accent=localStorage.getItem('theme-accent')||'#ffcb74';var system=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var nextMode=mode||system;document.documentElement.classList.add(nextMode);document.documentElement.classList.add('theme-'+style);document.documentElement.style.setProperty('--accent', accent);var hex=accent.replace('#','');if(hex.length===6){var r=parseInt(hex.slice(0,2),16);var g=parseInt(hex.slice(2,4),16);var b=parseInt(hex.slice(4,6),16);document.documentElement.style.setProperty('--accent-soft','rgba('+r+','+g+','+b+',0.14)');document.documentElement.style.setProperty('--accent-glow','rgba('+r+','+g+','+b+',0.24)');}}catch(e){document.documentElement.classList.add('dark');}})();`,
           }}
         />
         <AuthProvider>

@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { onValue, ref, set, push, remove } from 'firebase/database';
 import { database, userTasksRef, userExpensesRef } from './firebase';
+import { awardXp, setBadge } from '../lib/rewards';
+import { scheduleTimer } from '../lib/timerService';
 import type { User } from 'firebase/auth';
 
 type Task = {
@@ -56,6 +58,9 @@ export function TaskList({ user }: TaskListProps) {
   const [expenseNotes, setExpenseNotes] = useState('');
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [timerRunning, setTimerRunning] = useState(false);
+  const [reminderMessage, setReminderMessage] = useState('');
+  const [reminderMinutes, setReminderMinutes] = useState(15);
+  const [reminderStatus, setReminderStatus] = useState('');
 
   const completedCount = useMemo(() => tasks.filter((task) => task.completed).length, [tasks]);
   const progressAverage = useMemo(
@@ -139,6 +144,16 @@ export function TaskList({ user }: TaskListProps) {
     if (taskId) {
       setTasks((prev) => [...prev, { ...newTask, id: taskId }]);
     }
+
+    try {
+      await awardXp(user.uid, 5);
+      if (totalTasks + 1 >= 10) {
+        await setBadge(user.uid, 'topBuilder');
+      }
+    } catch {
+      // reward sync failure should not block task creation
+    }
+
     setNewTaskTitle('');
     setNewTaskPriority('medium');
   };
@@ -211,6 +226,21 @@ export function TaskList({ user }: TaskListProps) {
   const deleteExpense = async (expenseId: string) => {
     await remove(ref(database, `users/${user.uid}/expenses/${expenseId}`));
     setExpenses((current) => current.filter((expense) => expense.id !== expenseId));
+  };
+
+  const createReminder = async () => {
+    if (!reminderMessage.trim()) return;
+    const delayMs = Math.max(1, reminderMinutes) * 60_000;
+
+    try {
+      await scheduleTimer(user.uid, reminderMessage.trim(), delayMs, 'custom');
+      setReminderStatus('Reminder saved and will trigger on time.');
+      setReminderMessage('');
+      setReminderMinutes(15);
+      setTimeout(() => setReminderStatus(''), 5000);
+    } catch (error) {
+      setReminderStatus('Failed to save reminder. Try again.');
+    }
   };
 
   const toggleTimer = () => {
@@ -390,6 +420,45 @@ export function TaskList({ user }: TaskListProps) {
               Reset
             </button>
           </div>
+
+          <div className="mt-4 rounded-3xl border border-slate-700/60 bg-slate-900/90 p-4">
+            <div className="flex flex-col gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Reminder timer</p>
+                <p className="text-sm text-slate-400">Save reminders to your realtime DB and trigger them locally while the app is open.</p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-[1.5fr_0.8fr]">
+                <input
+                  type="text"
+                  value={reminderMessage}
+                  onChange={(e) => setReminderMessage(e.target.value)}
+                  placeholder="Reminder message"
+                  className="w-full rounded-3xl border border-slate-700/80 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 outline-none focus:border-amber-400"
+                />
+                <div className="rounded-3xl border border-slate-700/80 bg-slate-950/80 p-3">
+                  <label className="text-xs text-slate-400">Minutes</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={reminderMinutes}
+                    onChange={(e) => setReminderMinutes(Number(e.target.value))}
+                    className="mt-2 w-full rounded-3xl border border-slate-700/80 bg-slate-900/80 px-3 py-2 text-sm text-slate-100 outline-none focus:border-amber-400"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  type="button"
+                  onClick={createReminder}
+                  className="rounded-full bg-amber-400/20 border border-amber-400/40 px-4 py-2 text-xs font-semibold text-amber-200 hover:bg-amber-400/30 transition"
+                >
+                  Save reminder
+                </button>
+                {reminderStatus ? <span className="text-xs text-slate-400">{reminderStatus}</span> : null}
+              </div>
+            </div>
+          </div>
+
           <p className="mt-4 text-xs text-slate-400">
             Use the timer to focus on tasks and keep your productivity workflow on one screen.
           </p>

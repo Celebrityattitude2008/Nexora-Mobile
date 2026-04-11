@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { onValue, ref, set } from 'firebase/database';
 import { User } from 'firebase/auth';
-import { database, userProfilePicRef } from './firebase';
+import { database, userProfilePicRef, userStatsRef, userBadgesRef } from './firebase';
+import { awardDailyLoginXp, awardXp, setBadge } from '../lib/rewards';
 
 interface WelcomeCardProps {
   user: User;
@@ -12,6 +13,8 @@ interface WelcomeCardProps {
 
 export function WelcomeCard({ user }: WelcomeCardProps) {
   const [profilePic, setProfilePic] = useState<string>('');
+  const [stats, setStats] = useState<{ xp: number; level: number; dailyLoginStreak: number }>({ xp: 0, level: 1, dailyLoginStreak: 0 });
+  const [badges, setBadges] = useState<Record<string, boolean>>({});
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const displayName = user.displayName || user.email?.split('@')[0] || 'User';
   const firstLetter = displayName.charAt(0).toUpperCase();
@@ -29,6 +32,36 @@ export function WelcomeCard({ user }: WelcomeCardProps) {
     return unsubscribe;
   }, [user.uid]);
 
+  useEffect(() => {
+    const statsRef = userStatsRef(user.uid);
+    const unsubscribe = onValue(statsRef, (snapshot) => {
+      const value = snapshot.val();
+      if (value && typeof value === 'object') {
+        setStats({
+          xp: typeof value.xp === 'number' ? value.xp : 0,
+          level: typeof value.level === 'number' ? value.level : 1,
+          dailyLoginStreak: typeof value.dailyLoginStreak === 'number' ? value.dailyLoginStreak : 0,
+        });
+      }
+    });
+    return unsubscribe;
+  }, [user.uid]);
+
+  useEffect(() => {
+    const badgesRef = userBadgesRef(user.uid);
+    const unsubscribe = onValue(badgesRef, (snapshot) => {
+      const value = snapshot.val();
+      if (value && typeof value === 'object') {
+        setBadges(value as Record<string, boolean>);
+      }
+    });
+    return unsubscribe;
+  }, [user.uid]);
+
+  useEffect(() => {
+    void awardDailyLoginXp(user.uid);
+  }, [user.uid]);
+
   const openFilePicker = () => fileInputRef.current?.click();
 
   const handlePicUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,6 +72,15 @@ export function WelcomeCard({ user }: WelcomeCardProps) {
       const dataUrl = reader.result as string;
       setProfilePic(dataUrl);
       await set(ref(database, `users/${user.uid}/profilePic`), dataUrl);
+
+      try {
+        await awardXp(user.uid, 10);
+        if (!badges.profilePro) {
+          await setBadge(user.uid, 'profilePro');
+        }
+      } catch {
+        // ignore reward failures
+      }
     };
     reader.readAsDataURL(file);
   };
@@ -124,6 +166,34 @@ export function WelcomeCard({ user }: WelcomeCardProps) {
           <p className="mt-1 text-sm" style={{ color: 'var(--muted)' }}>
             {user.email}
           </p>
+          <div className="mt-4 flex flex-wrap gap-3 text-sm">
+            <div className="rounded-2xl border border-slate-700/60 bg-slate-900/70 px-3 py-2">
+              <p className="text-xs uppercase tracking-[0.24em] text-slate-500">XP</p>
+              <p className="mt-1 text-base font-semibold text-white">{stats.xp}</p>
+            </div>
+            <div className="rounded-2xl border border-slate-700/60 bg-slate-900/70 px-3 py-2">
+              <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Level</p>
+              <p className="mt-1 text-base font-semibold text-white">{stats.level}</p>
+            </div>
+            <div className="rounded-2xl border border-slate-700/60 bg-slate-900/70 px-3 py-2">
+              <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Daily streak</p>
+              <p className="mt-1 text-base font-semibold text-white">{stats.dailyLoginStreak}</p>
+            </div>
+          </div>
+          {Object.keys(badges).length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {Object.entries(badges)
+                .filter(([_, value]) => value)
+                .map(([badgeKey]) => (
+                  <span
+                    key={badgeKey}
+                    className="rounded-full border border-amber-400/30 bg-amber-400/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-amber-200"
+                  >
+                    {badgeKey === 'profilePro' ? 'Profile Pro' : badgeKey === 'topBuilder' ? 'Top Builder' : badgeKey === 'consistentCreator' ? 'Consistent Creator' : badgeKey}
+                  </span>
+                ))}
+            </div>
+          )}
           {!user.emailVerified && (
             <p
               className="mt-3 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em]"

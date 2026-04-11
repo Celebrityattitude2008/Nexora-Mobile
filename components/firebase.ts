@@ -24,3 +24,6 @@ export const userGoalsRef        = (uid: string) => ref(database, `users/${uid}/
 export const userProfilePicRef   = (uid: string) => ref(database, `users/${uid}/profilePic`);
 export const userExpensesRef     = (uid: string) => ref(database, `users/${uid}/expenses`);
 export const userTimersRef       = (uid: string) => ref(database, `users/${uid}/timers`);
+export const userStatsRef        = (uid: string) => ref(database, `users/${uid}/stats`);
+export const userBadgesRef       = (uid: string) => ref(database, `users/${uid}/badges`);
+export const userPreferencesRef  = (uid: string) => ref(database, `users/${uid}/preferences`);

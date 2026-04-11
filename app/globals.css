@@ -74,6 +74,27 @@ html.dark {
   color-scheme: dark;
 }
 
+html.theme-neon {
+  --accent: #7c3aed;
+  --accent-soft: rgba(124, 58, 237, 0.14);
+  --accent-glow: rgba(124, 58, 237, 0.24);
+  --panel: rgba(15, 7, 35, 0.92);
+  --surface: rgba(20, 10, 40, 0.88);
+  --border: rgba(124, 58, 237, 0.18);
+}
+
+html.theme-glass {
+  --surface: rgba(255, 255, 255, 0.12);
+  --surface-95: rgba(255, 255, 255, 0.95);
+  --panel: rgba(255, 255, 255, 0.12);
+  --border: rgba(255, 255, 255, 0.16);
+  --bg: rgba(10, 10, 15, 0.92);
+  --bg-90: rgba(10, 10, 15, 0.86);
+  --bg-80: rgba(10, 10, 15, 0.78);
+  --text: #f5f5f7;
+  --text-secondary: rgba(245, 245, 247, 0.68);
+}
+
 /* ─── Base ──────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;

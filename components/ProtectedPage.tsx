@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import { AuthPanel } from './AuthPanel';
 import { LoadingScreen } from './LoadingScreen';
 import { useAuth } from './AuthProvider';
+import { checkMissedTimers } from '../lib/timerService';
 
 export function ProtectedPage({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -10,6 +12,11 @@ export function ProtectedPage({ children }: { children: React.ReactNode }) {
   if (loading) {
     return <LoadingScreen />;
   }
+
+  useEffect(() => {
+    if (!user) return;
+    void checkMissedTimers(user.uid);
+  }, [user]);
 
   if (!user) {
     return (
